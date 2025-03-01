@@ -262,7 +262,7 @@ jobs:
           path: /tmp/output/output.jsonl
           retention-days: 30 # Keep the artifact for 30 days
 
-      - name: Create draft PR or push branch
+      - name: Create ready PR or push branch
         if: always() # Create PR or branch even if the previous steps fail
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
@@ -278,9 +278,9 @@ jobs:
             cd /tmp && python -m openhands.resolver.send_pull_request \
               --issue-number ${{ env.ISSUE_NUMBER }} \
               --target-branch ${{ env.TARGET_BRANCH }} \
-              --pr-type draft \
+              --pr-type ready \
               --reviewer ${{ github.actor }} | tee pr_result.txt && \
-              grep "draft created" pr_result.txt | sed 's/.*\///g' > pr_number.txt
+              grep "ready created" pr_result.txt | sed 's/.*\///g' > pr_number.txt
           else
             cd /tmp && python -m openhands.resolver.send_pull_request \
               --issue-number ${{ env.ISSUE_NUMBER }} \
@@ -378,7 +378,7 @@ jobs:
                 issue_number: issueNumber,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: `A potential fix has been generated and a draft PR #${prNumber} has been created. Please review the changes.`
+                body: `A potential fix has been generated and a ready PR #${prNumber} has been created. Please review the changes.`
               });
               process.env.AGENT_RESPONDED = 'true';
             } else if (!success && branchName) {
